@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced English Dictionary</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            text-align: center;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #cccccc;
+        }
+
+        h1 {
+            color: #234a84;
+            font-size: 25px;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #aaa;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            background: #234a84;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #152f59;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eef5ff;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        #history {
+            margin-top: 15px;
+            text-align: left;
+            overflow-wrap: anywhere;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Advanced English Dictionary</h1>
+
+    <input type="text" id="word"
+           placeholder="Enter an English word">
+
+    <br>
+
+    <button onclick="searchWord()">Search</button>
+    <button onclick="randomWord()">Random Word</button>
+    <button onclick="showHistory()">History</button>
+    <button onclick="exitApp()">Exit</button>
+
+    <div id="result" class="hidden"></div>
+    <div id="history" class="hidden"></div>
+</div>
+
+<script>
+const dictionary = {
+    "happy": {
+        meaning: "Feeling good",
+        synonyms: "joyful, cheerful",
+        antonyms: "sad"
+    },
+    "brave": {
+        meaning: "Not afraid",
+        synonyms: "bold, fearless",
+        antonyms: "afraid"
+    },
+    "beautiful": {
+        meaning: "Very attractive",
+        synonyms: "pretty, lovely",
+        antonyms: "ugly"
+    },
+    "intelligent": {
+        meaning: "Having good understanding",
+        synonyms: "smart, clever",
+        antonyms: "stupid"
+    },
+    "honest": {
+        meaning: "Truthful",
+        synonyms: "sincere, fair",
+        antonyms: "dishonest"
+    },
+    "ancient": {
+        meaning: "Very old",
+        synonyms: "old, historic",
+        antonyms: "modern"
+    },
+    "generous": {
+        meaning: "Willing to give",
+        synonyms: "kind, giving",
+        antonyms: "selfish"
+    },
+    "confident": {
+        meaning: "Having self-belief",
+        synonyms: "bold, assured",
+        antonyms: "insecure"
+    },
+    "curious": {
+        meaning: "Wanting to know",
+        synonyms: "inquisitive",
+        antonyms: "uninterested"
+    },
+    "creative": {
+        meaning: "Having new ideas",
+        synonyms: "innovative, imaginative",
+        antonyms: "uncreative"
+    }
+};
+
+function searchWord() {
+    const word = document.getElementById("word")
+        .value.trim().toLowerCase();
+
+    if (word === "") {
+        alert("Please enter a word!");
+        return;
+    }
+
+    displayWord(word);
+    saveHistory(word);
+}
+
+function displayWord(word) {
+    const result = document.getElementById("result");
+    const history = document.getElementById("history");
+
+    history.classList.add("hidden");
+    result.classList.remove("hidden");
+
+    if (dictionary[word]) {
+        const d = dictionary[word];
+
+        result.innerHTML = `
+            <h3>Word: ${word}</h3>
+            <p><b>Meaning:</b> ${d.meaning}</p>
+            <p><b>Synonyms:</b> ${d.synonyms}</p>
+            <p><b>Antonyms:</b> ${d.antonyms}</p>
+        `;
+    } else {
+        result.innerHTML = "<p>Word not found!</p>";
+    }
+}
+
+function randomWord() {
+    const words = Object.keys(dictionary);
+    const word = words[Math.floor(Math.random() * words.length)];
+
+    document.getElementById("word").value = word;
+    displayWord(word);
+}
+
+function saveHistory(word) {
+    let history = JSON.parse(
+        localStorage.getItem("dictionaryHistory") || "[]"
+    );
+
+    history.push(word);
+
+    localStorage.setItem(
+        "dictionaryHistory",
+        JSON.stringify(history)
+    );
+}
+
+function showHistory() {
+    const result = document.getElementById("result");
+    const historyDiv = document.getElementById("history");
+
+    result.classList.add("hidden");
+    historyDiv.classList.remove("hidden");
+
+    const history = JSON.parse(
+        localStorage.getItem("dictionaryHistory") || "[]"
+    );
+
+    if (history.length === 0) {
+        historyDiv.innerHTML = "<p>No history found!</p>";
+    } else {
+        historyDiv.innerHTML =
+            "<h3>Search History</h3>" +
+            history.map((word, index) =>
+                `<p>${index + 1}. ${word}</p>`
+            ).join("");
+    }
+}
+
+function exitApp() {
+    document.getElementById("result").classList.add("hidden");
+    document.getElementById("history").classList.add("hidden");
+    document.getElementById("word").value = "";
+
+    alert("Dictionary closed. You can close this browser tab.");
+}
+</script>
+
+</body>
+</html>
